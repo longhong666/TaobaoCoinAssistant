@@ -14,9 +14,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      # GitHub 托管的 ubuntu runner 已自带 Android SDK，无需 android-actions/setup-android
+      # （该 action 会安装已废弃的 tools 包，导致 sdkmanager 退出码 1）
       - name: Install Android 16 SDK
-        run: yes | sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+        run: |
+          if ! command -v sdkmanager >/dev/null 2>&1; then
+            ANDROID_SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+            SDKMGR="$(find "$ANDROID_SDK" -name sdkmanager -type f 2>/dev/null | head -n1)"
+            echo "sdkmanager not on PATH, falling back to: $SDKMGR"
+            export PATH="$(dirname "$SDKMGR"):$PATH"
+          fi
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
