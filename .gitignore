@@ -1,0 +1,27 @@
+# Android / Gradle
+.gradle/
+**/build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+
+# Signing files - never upload
+*.jks
+*.keystore
+key.properties
+
+# Native / generated
+.externalNativeBuild/
+.cxx/
+captures/
+
+# Generated release artifacts
+app/release/
+*.apk
+*.dm
+
+# OS
+.DS_Store
+Thumbs.db
